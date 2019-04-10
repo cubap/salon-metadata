@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!--
+    author: Patrick Cuba <cubap@slu.edu>
+    -->
+<html>
+
+<head>
+    <title>Muslim Characters of Christian Texts</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <style>
+        .card header {
+            font-style: italic;
+        }
+
+        section {
+            overflow: hidden;
+        }
+
+        em code {
+            font-style: normal;
+        }
+
+        label.tight {
+            font-size: .8em;
+            margin-bottom: -.25em;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="is-full-screen bg-dark text-light" id="badge">
+        <div class="is-vertical-align is-center is-full-width">
+            <h1 style="font-size:12rem;">Muslim Characters of Christian Texts</h1>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <section class="col-12 col-4-md col-4-lg" id="lists">
+                <deer-view deer-collection="estes-characters" deer-link="#"></deer-view>
+                <deer-view deer-collection="estes-texts" deer-link="#" id="texts"></deer-view>
+                <h4>Add a Book</h4>
+                <form deer-type="book" deer-context="https://schema.org/">
+                    <input type="hidden" deer-key="targetCollection" value="estes-texts">
+                    <div class="row">
+                        <label class="col-12 tight">Title</label> <input class="col" deer-key="name" type="text">
+                    </div>
+                    <div class="row">
+                        <label class="col-12 tight">Description</label> <input class="col" deer-key="description"
+                            type="text">
+                    </div>
+                    <div class="row">
+                        <input type="submit" class="col" value="Create New Book">
+                    </div>
+                </form>
+            </section>
+
+            <section class="col-12 col-8-md col-8-lg">
+                <div deer-listening="texts" deer-template="incident-report" deer-id="placeholder" class="card deer-view bd-light col">
+                    Select a text on the left to record a new reference
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="is-full-screen is-vertical-align">
+        <div class="is-center is-full-width">
+            <a href="https://github.com/CenterForDigitalHumanities" target="_blank">
+                <img alt="@CenterForDigitalHumanities" class="avatar" height="48"
+                    src="https://avatars3.githubusercontent.com/u/13770519?v=4&amp;s=96" width="48">
+            </a>
+            <small>
+                Walter J. Ong,
+                <small>S.J.</small> Center for Digital Humanities
+            </small>
+        </div>
+    </div>
+    
+
+    <script src="js/deer.js" type="module"></script>
+    <!-- <script src="./js/deer.js" type="module"></script> -->
+
+<script>
+    document.onscroll = () => {
+        badge.style.opacity = 1 - window.scrollY / window.innerHeight * 2
+    }
+</script>
+
+</body>
+
+</html>
