@@ -30,6 +30,11 @@
 </head>
 
 <body>
+
+        <div class="is-fixed is-full-width bg-error text-light">
+            This is an experiment and does not represent a public project or resource.
+        </div>
+
     <div class="is-full-screen bg-dark text-light" id="badge">
         <div class="is-vertical-align is-center is-full-width">
             <h1 style="font-size:12rem;">Muslim Characters of Christian Texts</h1>
@@ -39,8 +44,8 @@
 
     <div class="container">
         <div class="row">
+
             <section class="col-12 col-4-md col-4-lg" id="lists">
-                <deer-view deer-collection="estes-characters" deer-link="#"></deer-view>
                 <deer-view deer-collection="estes-texts" deer-link="#" id="texts"></deer-view>
                 <h4>Add a Book</h4>
                 <form deer-type="book" deer-context="https://schema.org/">
@@ -50,19 +55,23 @@
                     </div>
                     <div class="row">
                         <label class="col-12 tight">Description</label> <input class="col" deer-key="description"
-                            type="text">
+                        type="text">
                     </div>
                     <div class="row">
                         <input type="submit" class="col" value="Create New Book">
                     </div>
                 </form>
+                <deer-view deer-collection="estes-characters" deer-link="#"></deer-view>
             </section>
 
             <section class="col-12 col-8-md col-8-lg">
+                <deer-view deer-collection="estes-characters" deer-template="people"></deer-view>
+
                 <div deer-listening="texts" deer-template="incident-report" deer-id="placeholder" class="card deer-view bd-light col">
                     Select a text on the left to record a new reference
                 </div>
             </section>
+
         </div>
     </div>
 

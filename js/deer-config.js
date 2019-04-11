@@ -53,7 +53,9 @@ export default {
                 <textarea class="col-12" deer-key="transcription"></textarea>
                 <input type="submit" class="col" value="Record Instance">
             </div>
-        </form>`
+        </form>
+        <deer-view deer-id="http://devstore.rerum.io/v1/id/5cae154be4b0a44e13e61f42"></deer-view>`,
+        people: (list) => list.itemListElement.map(i => `<span class="tag">${getLabel(i)}</span>`)
     },
 
     version: "alpha 0.7"

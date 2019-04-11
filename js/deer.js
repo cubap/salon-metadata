@@ -13,15 +13,6 @@
 // Identify an alternate config location or only overwrite some items below.
 import { default as DEER } from './deer-config.js'
 
-// sandbox repository URLS
-DEER.URLS = {
-    BASE_ID: "http://devstore.rerum.io/v1",
-    CREATE: "http://tinydev.rerum.io/app/create",
-    UPDATE: "http://tinydev.rerum.io/app/update",
-    QUERY: "http://tinydev.rerum.io/app/query",
-    SINCE: "http://devstore.rerum.io/v1/since"
-}
-
 // Render is probably needed by all items, but can be removed.
 // CDN at https://centerfordigitalhumanities.github.io/deer/releases/
 import { default as renderer, initializeDeerViews } from 'https://centerfordigitalhumanities.github.io/deer/js/deer-render.js'
@@ -33,3 +24,5 @@ import { default as record, initializeDeerForms } from 'https://centerfordigital
 // fire up the element detection as needed
 initializeDeerViews(DEER) 
 initializeDeerForms(DEER)
+
+/** Non-DEER code */
