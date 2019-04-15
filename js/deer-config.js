@@ -44,10 +44,19 @@ export default {
      */
     TEMPLATES: {
         "incident-report": (obj) => `<h5>Reading&hellip; ${obj.name.value || obj.name}</h5>
+        <form deer-type="Person" deer-context="http://schema.org">
+            <input type="hidden" deer-key="targetCollection" value="estes-characters">
+            <div class="row">
+                <input placeholder="Name label" class="col" deer-key="name">
+                <input type="submit" class="col" value="addNewPerson">
+            </div>
+        </form>
         <form deer-type="incident">
             <div class="row">
-                <input type="hidden" deer-key="isPartOf" value="${obj["@id"]}">
-                <label class="col-12 tight">Page</label>
+            <input type="hidden" deer-key="isPartOf" value="${obj["@id"]}">
+            <input type="hidden" deer-key="subjectOf" value="" onupdate="folks.textContent=this.title">
+            <output id="folks"></output>
+            <label class="col-12 tight">Page</label>
                 <input class="col" type="number" deer-key="pageNumber">
                 <label class="col-12 tight">Transcription</label>
                 <textarea class="col-12" deer-key="transcription"></textarea>
@@ -55,7 +64,7 @@ export default {
             </div>
         </form>
         <deer-view deer-id="http://devstore.rerum.io/v1/id/5cae154be4b0a44e13e61f42"></deer-view>`,
-        people: (list) => list.itemListElement.map(i => `<span class="tag">${getLabel(i)}</span>`)
+        people: (list) => list.itemListElement.map(i => `<span class="tag" deer-id="${i["@id"]}">${getLabel(i)}</span>`)
     },
 
     version: "alpha 0.7"
