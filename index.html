@@ -26,7 +26,15 @@
             margin-bottom: -.25em;
             z-index: 1;
         }
+        .fa-spin {
+        -webkit-animation: fa-spin 5s infinite linear;
+        animation: fa-spin 5s infinite linear;
+        }
+        .tag {
+            cursor: pointer;
+        }
     </style>
+    <script defer src="https://use.fontawesome.com/releases/v5.8.1/js/all.js" integrity="sha384-g5uSoOSBd7KkhAMlnQILrecXvzst9TdC09/VM+pjDTCM+1il8RHz5fKANTFFb+gQ" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -36,8 +44,13 @@
         </div>
 
     <div class="is-full-screen bg-dark text-light" id="badge">
-        <div class="is-vertical-align is-center is-full-width">
+        <div class="is-vertical-align is-center is-full-width" style="flex:1;flex-direction:column;">
             <h1 style="font-size:12rem;">Muslim Characters of Christian Texts</h1>
+            <span class="fa-layers fa-fw fa-spin" style="font-size:12rem;">
+                <i class="fas fa-certificate"></i>
+                <i class="fas fa-star-and-crescent text-dark" data-fa-transform="shrink-10 right-3"></i>
+                <i class="fas fa-cross text-dark" data-fa-transform="shrink-10 left-3"></i>
+            </span>
         </div>
     </div>
 
@@ -46,7 +59,7 @@
         <div class="row">
 
             <section class="col-12 col-4-md col-4-lg" id="lists">
-                <deer-view deer-collection="estes-texts" deer-link="#" id="texts"></deer-view>
+                <deer-view deer-collection="estes-texts" deer-link="#" id="texts" deer-template="texts"></deer-view>
                 <h4>Add a Book</h4>
                 <form deer-type="book" deer-context="https://schema.org/">
                     <input type="hidden" deer-key="targetCollection" value="estes-texts">
@@ -65,8 +78,6 @@
             </section>
 
             <section class="col-12 col-8-md col-8-lg">
-                <deer-view deer-collection="estes-characters" deer-template="people" id="characterList"></deer-view>
-
                 <div deer-listening="texts" deer-template="incident-report" deer-id="placeholder" class="card deer-view bd-light col">
                     Select a text on the left to record a new reference
                 </div>

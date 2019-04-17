@@ -1,3 +1,4 @@
+import { default as UTILS } from 'https://centerfordigitalhumanities.github.io/deer/js/deer-utils.js'
 export default {
     ID: "deer-id",                  // attribute, URI for resource to render
     TYPE: "deer-type",              // attribute, JSON-LD @type
@@ -43,28 +44,80 @@ export default {
      * or an HTML String.
      */
     TEMPLATES: {
-        "incident-report": (obj) => `<h5>Reading&hellip; ${obj.name.value || obj.name}</h5>
-        <form deer-type="Person" deer-context="http://schema.org">
+        "incident-report": (obj) => `<h5 class="row">Reading&hellip; <cite>${UTILS.getLabel(obj)}</cite></h5>
+        <deer-view deer-collection="estes-characters" deer-template="people" id="characterList"></deer-view>
+        <form deer-type="Person" deer-context="http://schema.org" id="addPersonForm">
+            <p>Click a name to record a mention in <cite>${UTILS.getLabel(obj)}</cite></p>
             <input type="hidden" deer-key="targetCollection" value="estes-characters">
             <div class="row">
-                <input placeholder="Name label" class="col" deer-key="name">
-                <input type="submit" class="col" value="addNewPerson">
+                <input placeholder="Label for new character" class="col" deer-key="name">
+                <button type="submit" class="col"><i class="fas fa-plus"></i> Character</button>
             </div>
         </form>
-        <form deer-type="incident">
+        <form deer-type="incident" id="incidentForm" class="is-hidden">
             <div class="row">
             <input type="hidden" deer-key="isPartOf" value="${obj["@id"]}">
-            <input type="hidden" deer-key="subjectOf" value="" onupdate="folks.textContent=this.title">
-            <output id="folks"></output>
+            <input type="hidden" deer-key="about" value="">
+            <h5>Identifying&hellip; <output id="folks"></output></h5>
             <label class="col-12 tight">Page</label>
                 <input class="col" type="number" deer-key="pageNumber">
                 <label class="col-12 tight">Transcription</label>
                 <textarea class="col-12" deer-key="transcription"></textarea>
                 <input type="submit" class="col" value="Record Instance">
             </div>
-        </form>
-        <deer-view deer-id="http://devstore.rerum.io/v1/id/5cae154be4b0a44e13e61f42"></deer-view>`,
-        people: (list) => list.itemListElement.map(i => `<span class="tag" deer-id="${i["@id"]}">${getLabel(i)}</span>`)
+        </form>`,
+        people: (list) => {
+            let tmpl = ``
+            const addCharacter = new MutationObserver(addClick)
+            addCharacter.observe(characterList, {
+                childList:true
+            })
+            function addClick(mutationsList) {
+                for (var mutation of mutationsList) {
+                    let person = mutation.target
+                    if( isInThisBook(person.getAttribute("deer-id"),incidentForm.querySelector("[deer-key='isPartOf']")) ) {
+                        // person is mentioned in the book already
+                        person.onclick = (event)=> addPersonToIncident(event.target,incidentForm.querySelector("[deer-key='about']"))
+                    } else {
+                        person.classList.add("is-hidden") // hide from clicks and view 
+                    }
+                }
+            }
+
+            function isInThisBook(personId, bookId) {
+                return true
+                try{
+                    return texts.querySelector("[deer-id='"+bookId.value+"']").getAttribute("schema-mentions").indexOf(personId) > -1
+                } catch(err){ return false }
+            }
+
+            function addPersonToIncident(person,incident) {
+                let id = person.getAttribute("deer-id")
+                if(id===null || person.tagName !== "SPAN") return false
+                let title = person.textContent
+                incident.title= title
+                incident.value= id 
+                folks.textContent = incident.title
+                addPersonForm.classList.add("is-hidden")
+                incidentForm.classList.remove("is-hidden")
+                incidentForm.reset()
+            }
+
+            return tmpl+=list.itemListElement.reduce((a,b) => a+=`<span class="tag" deer-id="${b["@id"]}">${UTILS.getLabel(b)}</span>`,``)
+        },
+        texts: function(obj, options={}) {
+            let tmpl = `<h2>${UTILS.getLabel(obj)}</h2>`
+            if(options.list){
+                tmpl += `<ul>`
+                obj[options.list].forEach((val,index)=>{
+                    let name = UTILS.getLabel(val,(val.type || val['@type'] || label+index))
+                    tmpl+= (val["@id"] && options.link) ? `<li deer-id="${val["@id"]}" schema-mentions="${val.mentions}"><a href="${options.link}${val["@id"]}">${name}</a></li>` : `<li deer-id="${val["@id"]}" schema-mentions="${val.mentions}">${name}</li>`
+                })
+                tmpl += `</ul>`
+            }
+            
+            return tmpl
+        }
     },
 
     version: "alpha 0.7"
