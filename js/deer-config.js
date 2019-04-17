@@ -1,4 +1,5 @@
 import { default as UTILS } from 'https://centerfordigitalhumanities.github.io/deer/js/deer-utils.js'
+import { default as tagsInput } from './tags-input.js'
 export default {
     ID: "deer-id",                  // attribute, URI for resource to render
     TYPE: "deer-type",              // attribute, JSON-LD @type
@@ -45,6 +46,7 @@ export default {
      */
     TEMPLATES: {
         "incident-report": (obj) => `<h5 class="row">Reading&hellip; <cite>${UTILS.getLabel(obj)}</cite></h5>
+        <p>${UTILS.getValue(obj.description)}</p>
         <deer-view deer-collection="estes-characters" deer-template="people" id="characterList"></deer-view>
         <form deer-type="Person" deer-context="http://schema.org" id="addPersonForm">
             <p>Click a name to record a mention in <cite>${UTILS.getLabel(obj)}</cite></p>
@@ -56,16 +58,21 @@ export default {
         </form>
         <form deer-type="incident" id="incidentForm" class="is-hidden">
             <div class="row">
-            <input type="hidden" deer-key="isPartOf" value="${obj["@id"]}">
-            <input type="hidden" deer-key="about" value="">
-            <h5>Identifying&hellip; <output id="folks"></output></h5>
-            <label class="col-12 tight">Page</label>
+                <input type="hidden" deer-key="isPartOf" value="${obj["@id"]}">
+                <input type="hidden" deer-key="about" value="">
+                <h5>Identifying&hellip; <output id="folks"></output></h5>
+                <label class="col-12 tight">Page</label>
                 <input class="col" type="number" deer-key="pageNumber">
                 <label class="col-12 tight">Transcription</label>
                 <textarea class="col-12" deer-key="transcription"></textarea>
-                <input type="submit" class="col" value="Record Instance">
+                <label class="col-12 tight">Tags (delimit with <kbd>,</kbd>, <kbd>TAB</kbd>, <kbd>ENTER</kbd>)</label>
+                <input type="tags" name="col-12" deer-key="tags">
+                <input type="submit" class="col" value="Record Mention">
             </div>
-        </form>`,
+        </form>
+        <h5>Existing Incidents</h5>
+        <div id="mentionsList" class="is-hidden"></div>
+        `,
         people: (list) => {
             let tmpl = ``
             const addCharacter = new MutationObserver(addClick)
@@ -74,21 +81,8 @@ export default {
             })
             function addClick(mutationsList) {
                 for (var mutation of mutationsList) {
-                    let person = mutation.target
-                    if( isInThisBook(person.getAttribute("deer-id"),incidentForm.querySelector("[deer-key='isPartOf']")) ) {
-                        // person is mentioned in the book already
-                        person.onclick = (event)=> addPersonToIncident(event.target,incidentForm.querySelector("[deer-key='about']"))
-                    } else {
-                        person.classList.add("is-hidden") // hide from clicks and view 
-                    }
+                    mutation.target.onclick = (event)=> addPersonToIncident(event.target,incidentForm.querySelector("[deer-key='about']"))
                 }
-            }
-
-            function isInThisBook(personId, bookId) {
-                return true
-                try{
-                    return texts.querySelector("[deer-id='"+bookId.value+"']").getAttribute("schema-mentions").indexOf(personId) > -1
-                } catch(err){ return false }
             }
 
             function addPersonToIncident(person,incident) {
@@ -98,9 +92,32 @@ export default {
                 incident.title= title
                 incident.value= id 
                 folks.textContent = incident.title
+                tagsInput(document.querySelector('input[type="tags"]'))
                 addPersonForm.classList.add("is-hidden")
                 incidentForm.classList.remove("is-hidden")
+                addMentions(id)
                 incidentForm.reset()
+            }
+
+            function addMentions(personId) {
+                let obj = {
+                    about: personId
+                }
+                fetch("http://tinydev.rerum.io/app/query",{
+                    method: "POST",
+                    body: JSON.stringify(obj),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response=>response.json())
+                .then(m=>{
+                    if(m.length > 0) {
+                        mentionsList.innerHTML = m.reduce((a,b)=>a+=`<div><a onclick="${UTILS.getValue(b.about)}"><i class="fas fa-bookmark"></i> ${UTILS.getLabel(b)}</a></div>`,``)
+                        mentionsList.classList.remove("is-hidden")
+                    }
+                })
+                .catch((err)=>console.log(err))
             }
 
             return tmpl+=list.itemListElement.reduce((a,b) => a+=`<span class="tag" deer-id="${b["@id"]}">${UTILS.getLabel(b)}</span>`,``)
@@ -108,12 +125,10 @@ export default {
         texts: function(obj, options={}) {
             let tmpl = `<h2>${UTILS.getLabel(obj)}</h2>`
             if(options.list){
-                tmpl += `<ul>`
                 obj[options.list].forEach((val,index)=>{
                     let name = UTILS.getLabel(val,(val.type || val['@type'] || label+index))
-                    tmpl+= (val["@id"] && options.link) ? `<li deer-id="${val["@id"]}" schema-mentions="${val.mentions}"><a href="${options.link}${val["@id"]}">${name}</a></li>` : `<li deer-id="${val["@id"]}" schema-mentions="${val.mentions}">${name}</li>`
+                    tmpl+= (val["@id"] && options.link) ? `<div deer-id="${val["@id"]}" schema-mentions="${val.mentions}"><a href="${options.link}${val["@id"]}"><i class="fas fa-book"></i> ${name}</a></div>` : `<div deer-id="${val["@id"]}" schema-mentions="${val.mentions}"><i class="fas fa-book"></i> ${name}</div>`
                 })
-                tmpl += `</ul>`
             }
             
             return tmpl

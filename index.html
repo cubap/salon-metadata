@@ -33,6 +33,55 @@
         .tag {
             cursor: pointer;
         }
+        /* tagsInput CSS */
+        .tags-input {
+            display: inline-block;
+            padding: 0 2px;
+            background: #FFF;
+            border: 1px solid #CCC;
+            width: 16em;
+            border-radius: 2px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .tags-input .tag {
+            display: inline-block;
+            background: #EEE;
+            color: #444;
+            padding: 0 4px;
+            margin: 2px;
+            border: 1px solid #CCC;
+            border-radius: 2px;
+            font: inherit;
+            user-select: none;
+            cursor: pointer;
+            transition: all 100ms ease;
+        }
+        .tags-input .tag.selected {
+            background-color: #777;
+            border-color: #777;
+            color: #EEE;
+        }
+        .tags-input .tag.dupe {
+            transform: scale3d(1.2, 1.2, 1.2);
+            background-color: #FCC;
+            border-color: #700;
+        }
+        .tags-input input {
+            appearance: none !important;
+            display: inline-block !important;
+            padding: 3px;
+            margin: 0 !important;
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            font: inherit !important;
+            font-size: 100% !important;
+            outline: none !important;
+        }
+        .tags-input .selected ~ input {
+            opacity: 0.3;
+        }
+
     </style>
     <script defer src="https://use.fontawesome.com/releases/v5.8.1/js/all.js" integrity="sha384-g5uSoOSBd7KkhAMlnQILrecXvzst9TdC09/VM+pjDTCM+1il8RHz5fKANTFFb+gQ" crossorigin="anonymous"></script>
 </head>
@@ -74,7 +123,7 @@
                         <input type="submit" class="col" value="Create New Book">
                     </div>
                 </form>
-                <deer-view deer-collection="estes-characters" deer-link="#"></deer-view>
+                <deer-view deer-collection="estes-characters"></deer-view>
             </section>
 
             <section class="col-12 col-8-md col-8-lg">
