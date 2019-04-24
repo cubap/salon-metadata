@@ -1,5 +1,6 @@
 import { default as UTILS } from 'https://centerfordigitalhumanities.github.io/deer/js/deer-utils.js'
 import { default as tagsInput } from './tags-input.js'
+
 export default {
     ID: "deer-id",                  // attribute, URI for resource to render
     TYPE: "deer-type",              // attribute, JSON-LD @type
@@ -45,7 +46,7 @@ export default {
      * or an HTML String.
      */
     TEMPLATES: {
-        "incident-report": (obj) => `<h5 class="row">Reading&hellip; <cite>${UTILS.getLabel(obj)}</cite></h5>
+        "incident-report": (obj,options) => `<h5 class="row">Reading&hellip; <cite>${UTILS.getLabel(obj)}</cite></h5>
         <p>${UTILS.getValue(obj.description)}</p>
         <deer-view deer-collection="estes-characters" deer-template="people" id="characterList"></deer-view>
         <form deer-type="Person" deer-context="http://schema.org" id="addPersonForm">
@@ -101,7 +102,7 @@ export default {
 
             function addMentions(personId) {
                 let obj = {
-                    about: personId
+                    "body.about.value" : personId
                 }
                 fetch("http://tinydev.rerum.io/app/query",{
                     method: "POST",
@@ -113,8 +114,10 @@ export default {
                 .then(response=>response.json())
                 .then(m=>{
                     if(m.length > 0) {
-                        mentionsList.innerHTML = m.reduce((a,b)=>a+=`<div><a onclick="${UTILS.getValue(b.about)}"><i class="fas fa-bookmark"></i> ${UTILS.getLabel(b)}</a></div>`,``)
+                        mentionsList.innerHTML = m.reduce((a,b)=>a+=`<div><a href="#${UTILS.getValue(b.target)}"><i class="fas fa-bookmark"></i> ${UTILS.getLabel(UTILS.expand(b.target), "Incident "+b.__rerum.createdAt)}</a></div>`,``)
                         mentionsList.classList.remove("is-hidden")
+                    } else {
+                        mentionsList.classList.add("is-hidden")
                     }
                 })
                 .catch((err)=>console.log(err))
