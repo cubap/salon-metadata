@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<!--
+    author: Patrick Cuba <cubap@slu.edu>
+    -->
+<html>
+
+<head>
+    <title>A Salon full of Metadata</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <style>
+        .card header {
+            font-style: italic;
+        }
+
+        section {
+            overflow: hidden;
+        }
+
+        em code {
+            font-style: normal;
+        }
+
+        label.tight {
+            font-size: .8em;
+            margin-bottom: -.25em;
+            z-index: 1;
+        }
+        .fa-spin {
+        -webkit-animation: fa-spin 5s infinite linear;
+        animation: fa-spin 5s infinite linear;
+        }
+        .tag {
+            cursor: pointer;
+        }
+        /* tagsInput CSS */
+        .tags-input {
+            display: inline-block;
+            padding: 0 2px;
+            background: #FFF;
+            border: 1px solid #CCC;
+            width: 16em;
+            border-radius: 2px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .tags-input .tag {
+            display: inline-block;
+            background: #EEE;
+            color: #444;
+            padding: 0 4px;
+            margin: 2px;
+            border: 1px solid #CCC;
+            border-radius: 2px;
+            font: inherit;
+            user-select: none;
+            cursor: pointer;
+            transition: all 100ms ease;
+        }
+        .tags-input .tag.selected {
+            background-color: #777;
+            border-color: #777;
+            color: #EEE;
+        }
+        .tags-input .tag.dupe {
+            transform: scale3d(1.2, 1.2, 1.2);
+            background-color: #FCC;
+            border-color: #700;
+        }
+        .tags-input input {
+            appearance: none !important;
+            display: inline-block !important;
+            padding: 3px;
+            margin: 0 !important;
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            font: inherit !important;
+            font-size: 100% !important;
+            outline: none !important;
+        }
+        .tags-input .selected ~ input {
+            opacity: 0.3;
+        }
+        .help-text {
+            font-size: .8em;
+            margin-top: -1em;
+        }
+
+    </style>
+    <script defer src="https://use.fontawesome.com/releases/v5.8.1/js/all.js" integrity="sha384-g5uSoOSBd7KkhAMlnQILrecXvzst9TdC09/VM+pjDTCM+1il8RHz5fKANTFFb+gQ" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="is-fixed is-full-width bg-error text-light">
+        This is an experiment and does not represent a public project or resource&hellip; yet!
+    </div>
+    
+    <div class="container">
+        <h1>Dump it all in Interface</h1>
+        <div class="row">
+            <textarea oninput="blammo(event)" placeholder="Paste | delimited record"></textarea>
+        </div>
+        <div class="row" id="formsplatter">
+        </div>
+    </div>
+
+    <div class="is-full-screen is-vertical-align">
+        <div class="is-center is-full-width">
+            <a href="https://github.com/CenterForDigitalHumanities" target="_blank">
+                <img alt="@CenterForDigitalHumanities" class="avatar" height="48"
+                    src="https://avatars3.githubusercontent.com/u/13770519?v=4&amp;s=96" width="48">
+            </a>
+            <small>
+                Walter J. Ong,
+                <small>S.J.</small> Center for Digital Humanities
+            </small>
+        </div>
+    </div>
+    
+
+    <script src="js/deer.js" type="module"></script>
+    <!-- <script src="./js/deer.js" type="module"></script> -->
+
+<script>
+    function blammo(event){
+        let value = event.target.value
+        let types = [
+            { key: "rdf:resource", label: "File name" },
+            { key: "cnt:ContentAsText", label: "Transcription" },
+            { key: "name", label: "Title" },
+            { key: "creator", label: "Creator" },
+            { key: "contributor", label: "Contributor" },
+            { key: "dateCreated", label: "Date" },
+            { key: "madsrdf:Source", label: "Source" },
+            { key: "about", label: "Subject" },
+            { key: "location", label: "Local Subjects" },
+            { key: "description", label: "Description" },
+            { key: "dcterms:extent", label: "Extent" },
+            { key: "collectionPage", label: "Website" },
+            { key: "contributor", label: "Contributing Institutions" },
+            { key: "publisher", label: "Publisher" },
+            { key: "dcterms:rights", label: "Rights" },
+            { key: "inLanguage", label: "Language" },
+            { key: "specs", label: "Digitization Specifications" },
+            { key: "fileFormat", label: "Format" },
+            { key: "encodingFormat", label: "Media Type" },
+            { key: "disambiguatingDescription", label: "Type" },
+            { key: "@id", label: "Resource Identifier" },
+            { key: "cnt:ContentAtText", label: "Note" },
+            { key: "citation", label: "Bibliographic Citation" },
+            { key: "isRelatedTo", label: "Digital Collection (Relation)" },
+            { key: "dateCreated", label: "Date Digital" },
+            { key: "contributor", label: "Digital Assistant" },
+            { key: "selector", label: "Timestamp "}
+        ]
+        let records = value.split("|")
+        records = records.reduce((a,b,i)=>{
+            let entry = Math.floor(i/types.length)
+            if(a[entry]===undefined){
+                a[entry] = []
+            }
+            a[entry][i%types.length]=b
+            return a
+        },[])
+        let formset = `<button>Save all these!</button>`
+        for(const r of records){
+            formset += `<form deer-context="https://schema.org, http://www.w3.org/ns/anno.jsonld" deer-type="Thing" class="col-12">
+            ${r.reduce((a,b,i)=>a+=`<div class="row"><label class="col" for="r${i}">${types[i].label}</label><input class="col" id="r${i}" type="text" deer-key="${types[i].key}" value="${b}" ></div>`,``)}
+                <input type="submit" value="Save this Record">
+            </form>`
+        }
+        formsplatter.innerHTML = formset
+    }
+</script>
+
+</body>
+
+</html>
