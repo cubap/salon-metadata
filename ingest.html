@@ -96,19 +96,19 @@
     </div>
     
     <div class="container">
-        <h1>Dump it all in Interface</h1>
+        <h1>"Dump it all in" Interface</h1>
         <div class="row">
             <textarea oninput="blammo(event)" placeholder="Paste | delimited record"></textarea>
         </div>
         <div class="row" id="formsplatter">
         </div>
     </div>
-
+    
     <div class="is-full-screen is-vertical-align">
         <div class="is-center is-full-width">
             <a href="https://github.com/CenterForDigitalHumanities" target="_blank">
                 <img alt="@CenterForDigitalHumanities" class="avatar" height="48"
-                    src="https://avatars3.githubusercontent.com/u/13770519?v=4&amp;s=96" width="48">
+                src="https://avatars3.githubusercontent.com/u/13770519?v=4&amp;s=96" width="48">
             </a>
             <small>
                 Walter J. Ong,
@@ -117,12 +117,13 @@
         </div>
     </div>
     
-
     <script src="js/deer.js" type="module"></script>
-    <!-- <script src="./js/deer.js" type="module"></script> -->
+    
+    <script type="module">
+        import { default as DEER } from './js/deer-config.js'
+        import { initializeDeerForms } from 'https://centerfordigitalhumanities.github.io/deer/js/deer-record.js'
 
-<script>
-    function blammo(event){
+    window.blammo = function(event){
         let value = event.target.value
         let types = [
             { key: "rdf:resource", label: "File name" },
@@ -163,13 +164,27 @@
             return a
         },[])
         let formset = `<button>Save all these!</button>`
-        for(const r of records){
-            formset += `<form deer-context="https://schema.org, http://www.w3.org/ns/anno.jsonld" deer-type="Thing" class="col-12">
-            ${r.reduce((a,b,i)=>a+=`<div class="row"><label class="col" for="r${i}">${types[i].label}</label><input class="col" id="r${i}" type="text" deer-key="${types[i].key}" value="${b}" ></div>`,``)}
-                <input type="submit" value="Save this Record">
-            </form>`
-        }
+
+        formset += records.reduce((x,r,k)=>x+=`<form deer-context='["https://schema.org", "http://www.w3.org/ns/anno.jsonld"]' deer-type="Thing" class="col-12">
+            <input type="hidden" deer-key="targetCollection" value="salon-items">
+        ${r.reduce((a,b,i)=>a+=`<div class="row"><label class="col" for="k${k}r${i}">${types[i].label}</label><input title="${types[i].label}" class="col" id="k${k}r${i}" type="text" deer-key="${types[i].key}" value="" ></div>`,``)}
+            <input type="submit" value="Save this Record">
+        </form>`,``)
+
         formsplatter.innerHTML = formset
+        for(let row in records){
+            records[row].map((val,index)=>window["k"+row+"r"+index].value = val)
+        }
+        let newForms = formsplatter.querySelectorAll("form[deer-type]")
+        if(newForms.length > 0) {
+            initializeDeerForms(DEER)
+        }
+    }
+
+    function blammo(){
+        var gooch = 0
+        var fs = document.querySelectorAll("input[type='submit']")
+        var clr = setInterval(()=>{fs.item(gooch++).click()},1000)
     }
 </script>
 

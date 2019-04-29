@@ -21,11 +21,11 @@ export default {
     ENTITYNAME: "[deer-key='name']",// selector, value to grab for form entity label
 
     URLS: {
-        BASE_ID: "http://devstore.rerum.io/v1",
-        CREATE: "http://tinydev.rerum.io/app/create",
-        UPDATE: "http://tinydev.rerum.io/app/update",
-        QUERY: "http://tinydev.rerum.io/app/query",
-        SINCE: "http://devstore.rerum.io/v1/since"
+        BASE_ID: "http://store.rerum.io/v1",
+        CREATE: "http://tiny.rerum.io/app/create",
+        UPDATE: "http://tiny.rerum.io/app/update",
+        QUERY: "http://tiny.rerum.io/app/query",
+        SINCE: "http://store.rerum.io/v1/since"
     },
 
     EVENTS: {
@@ -46,96 +46,83 @@ export default {
      * or an HTML String.
      */
     TEMPLATES: {
-        "incident-report": (obj,options) => `<h5 class="row">Reading&hellip; <cite>${UTILS.getLabel(obj)}</cite></h5>
-        <p>${UTILS.getValue(obj.description)}</p>
-        <deer-view deer-collection="estes-characters" deer-template="people" id="characterList"></deer-view>
-        <form deer-type="Person" deer-context="http://schema.org" id="addPersonForm">
-            <p>Click a name to record a mention in <cite>${UTILS.getLabel(obj)}</cite></p>
-            <input type="hidden" deer-key="targetCollection" value="estes-characters">
-            <div class="row">
-                <input placeholder="Label for new character" class="col" deer-key="name">
-                <button type="submit" class="col"><i class="fas fa-plus"></i> Character</button>
-            </div>
-        </form>
-        <form deer-type="incident" id="incidentForm" class="is-hidden">
-            <div class="row">
-                <input type="hidden" deer-key="isPartOf" value="${obj["@id"]}">
-                <input type="hidden" deer-key="about" value="">
-                <h5>Identifying&hellip; <output id="folks"></output></h5>
-                <label class="col-12 tight">Page</label>
-                <input class="col" type="number" deer-key="pageNumber">
-                <label class="col-12 tight">Transcription</label>
-                <textarea class="col-12" deer-key="transcription"></textarea>
-                <label class="col-12 tight">Tags (delimit with <kbd>,</kbd>, <kbd>TAB</kbd>, <kbd>ENTER</kbd>)</label>
-                <input type="tags" name="col-12" deer-key="tags">
-                <input type="submit" class="col" value="Record Mention">
-            </div>
-        </form>
-        <h5>Existing Incidents</h5>
-        <div id="mentionsList" class="is-hidden"></div>
-        `,
-        people: (list) => {
-            let tmpl = ``
-            const addCharacter = new MutationObserver(addClick)
-            addCharacter.observe(characterList, {
-                childList:true
-            })
-            function addClick(mutationsList) {
-                for (var mutation of mutationsList) {
-                    mutation.target.onclick = (event)=> addPersonToIncident(event.target,incidentForm.querySelector("[deer-key='about']"))
-                }
-            }
-
-            function addPersonToIncident(person,incident) {
-                let id = person.getAttribute("deer-id")
-                if(id===null || person.tagName !== "SPAN") return false
-                let title = person.textContent
-                incident.title= title
-                incident.value= id 
-                folks.textContent = incident.title
-                tagsInput(document.querySelector('input[type="tags"]'))
-                addPersonForm.classList.add("is-hidden")
-                incidentForm.classList.remove("is-hidden")
-                addMentions(id)
-                incidentForm.reset()
-            }
-
-            function addMentions(personId) {
-                let obj = {
-                    "body.about.value" : personId
-                }
-                fetch("http://tinydev.rerum.io/app/query",{
-                    method: "POST",
-                    body: JSON.stringify(obj),
-                    headers: {
-                        "Content-Type": "application/json"
+        items: function(obj, options={}) {
+            function getIcon(type) {
+                let icon = () => {
+                    if (type) {
+                        if(typeof type==="object") {
+                            type = UTILS.getValue(type)
+                        }
+                        if (/(list|collection)/gi.test(type)) return "list"
+                        if (/(person|user)/gi.test(type)) return "user"
+                        if (/(organization)/gi.test(type)) return "sitemap"
+                        if (/(application|software)/gi.test(type)) return "laptop-code"
+                        if (/(book|manuscript)/gi.test(type)) return "book"
+                        if (/(thing)/gi.test(type)) return "box"
+                        if (/(image)/gi.test(type)) return "image"
+                        if (/(creative)/gi.test(type)) return "palette"
+                        if (/(email)/gi.test(type)) return "envelope"
+                        if (/(pdf)/gi.test(type)) return "file-pdf"
+                        if (/(communicate)/gi.test(type)) return "comment-dots"
+                        if (/(video)/gi.test(type)) return "video"
                     }
-                })
-                .then(response=>response.json())
-                .then(m=>{
-                    if(m.length > 0) {
-                        mentionsList.innerHTML = m.reduce((a,b)=>a+=`<div><a href="#${UTILS.getValue(b.target)}"><i class="fas fa-bookmark"></i> ${UTILS.getLabel(UTILS.expand(b.target), "Incident "+b.__rerum.createdAt)}</a></div>`,``)
-                        mentionsList.classList.remove("is-hidden")
-                    } else {
-                        mentionsList.classList.add("is-hidden")
-                    }
-                })
-                .catch((err)=>console.log(err))
+                    return "angle-right"
+                }
+                return `<i class="fas fa-${icon()}"></i>`
             }
-
-            return tmpl+=list.itemListElement.reduce((a,b) => a+=`<span class="tag" deer-id="${b["@id"]}">${UTILS.getLabel(b)}</span>`,``)
-        },
-        texts: function(obj, options={}) {
             let tmpl = `<h2>${UTILS.getLabel(obj)}</h2>`
             if(options.list){
                 obj[options.list].forEach((val,index)=>{
-                    let name = UTILS.getLabel(val,(val.type || val['@type'] || label+index))
-                    tmpl+= (val["@id"] && options.link) ? `<div deer-id="${val["@id"]}" schema-mentions="${val.mentions}"><a href="${options.link}${val["@id"]}"><i class="fas fa-book"></i> ${name}</a></div>` : `<div deer-id="${val["@id"]}" schema-mentions="${val.mentions}"><i class="fas fa-book"></i> ${name}</div>`
+                    let name = UTILS.getLabel(val,(val.type || val["rdf:resource"] || val['@type'] || index))
+                    tmpl+= (val["@id"] && options.link) 
+                    ? `<div deer-id="${val["@id"]}"><a href="${options.link}${val["@id"]}">${getIcon(val.encodingFormat || val["@type"])} ${name}</a></div>` 
+                    : `<div deer-id="${val["@id"]}">${getIcon(val.encodingFormat || val["@type"])} ${name}</div>`
                 })
             }
+            return tmpl
+        },
+        entity: function(obj, options = {}) {
+            function firstLabel(obj){
+                let label = UTILS.getLabel(obj)
+                return (Array.isArray(label)) ? label[0] : label
+            }
+            let tmpl = `<h2>${firstLabel(obj)}</h2>`
+            let list = ``
             
+            for (let key in obj) {
+                if(["__rerum","@context"].indexOf(key)>-1) {continue}
+                let label = UTILS.getLabel(obj[key],key)
+                let value = UTILS.getValue(obj[key])
+                try {
+                    if ((value.image || value.trim()).length > 0) {
+                        list += (label === "depiction") ? `<img title="${label}" src="${value.image || value}" deer-source="${obj[key].source.citationSource || obj[key].source }">` : `<dt deer-source="${obj[key].source.citationSource || obj[key].source }">${label}</dt><dd>${value.image || value}</dd>`
+                    }
+                } catch (err) {
+                    // Some object maybe or untrimmable somesuch
+                    // is it object/array?
+                    list+=`<dt>${label}</dt>`
+                    if(Array.isArray(value)){
+                        let arrVal = ``
+                        value.forEach((val,index)=>{
+                            let name = UTILS.getLabel(val,(val.type || val['@type'] || label+index))
+                            if(arrVal.indexOf(val["@id"])===-1 && arrVal.indexOf(name)===-1) {
+                                arrVal+= (val["@id"]) ? `<dd><a href="#${val["@id"]}">${name}</a></dd>` : `<dd>${name}</dd>`
+                            }
+                        })
+                        if(arrVal.length>0) list += arrVal
+                    } else {
+                        // a single, probably
+                        let v = UTILS.getValue(value)
+                        if(typeof v==="object") { v = UTILS.getLabel(v) }
+                        if(v === "[ unlabeled ]") { v = v['@id'] || v.id || "[ complex value unknown ]"}
+                        list+=(value['@id'])?`<dd><a href="${options.link||""}#${value['@id']}">${v}</a></dd>`:`<dd>${v}</dd>`
+                    }
+                }
+            }
+            tmpl += (list.includes("<dd>")) ? `<dl>${list}</dl>` : ``
             return tmpl
         }
+        
     },
 
     version: "alpha 0.7"

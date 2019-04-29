@@ -26,13 +26,16 @@
             margin-bottom: -.25em;
             z-index: 1;
         }
+
         .fa-spin {
-        -webkit-animation: fa-spin 5s infinite linear;
-        animation: fa-spin 5s infinite linear;
+            -webkit-animation: fa-spin 5s infinite linear;
+            animation: fa-spin 5s infinite linear;
         }
+
         .tag {
             cursor: pointer;
         }
+
         /* tagsInput CSS */
         .tags-input {
             display: inline-block;
@@ -43,6 +46,7 @@
             border-radius: 2px;
             box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
         }
+
         .tags-input .tag {
             display: inline-block;
             background: #EEE;
@@ -56,16 +60,19 @@
             cursor: pointer;
             transition: all 100ms ease;
         }
+
         .tags-input .tag.selected {
             background-color: #777;
             border-color: #777;
             color: #EEE;
         }
+
         .tags-input .tag.dupe {
             transform: scale3d(1.2, 1.2, 1.2);
             background-color: #FCC;
             border-color: #700;
         }
+
         .tags-input input {
             appearance: none !important;
             display: inline-block !important;
@@ -78,28 +85,31 @@
             font-size: 100% !important;
             outline: none !important;
         }
-        .tags-input .selected ~ input {
+
+        .tags-input .selected~input {
             opacity: 0.3;
         }
+
         .help-text {
             font-size: .8em;
             margin-top: -1em;
         }
-
     </style>
-    <script defer src="https://use.fontawesome.com/releases/v5.8.1/js/all.js" integrity="sha384-g5uSoOSBd7KkhAMlnQILrecXvzst9TdC09/VM+pjDTCM+1il8RHz5fKANTFFb+gQ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.8.1/js/all.js"
+        integrity="sha384-g5uSoOSBd7KkhAMlnQILrecXvzst9TdC09/VM+pjDTCM+1il8RHz5fKANTFFb+gQ" crossorigin="anonymous">
+        </script>
 </head>
 
 <body>
 
-        <div class="is-fixed is-full-width bg-error text-light">
-            This is an experiment and does not represent a public project or resource&hellip; yet!
-        </div>
+    <div class="is-fixed is-full-width bg-error text-light">
+        This is an experiment and does not represent a public project or resource&hellip; yet!
+    </div>
 
     <div class="is-full-screen bg-dark text-light" id="badge">
         <div class="is-vertical-align is-center is-full-width" style="flex:1;flex-direction:column;">
-            <img src="css/HaddoHouse.jpg" class="is-full-width">
-            <h1 style="font-size:12rem;z-index: 1;">Metadata in the Salon</h1>
+            <img src="css/HaddoHouse.jpg" style="height: 100vh; max-width: initial;">
+            <h1 style="font-size:12rem;z-index: 1;position:absolute;">Metadata in the Salon</h1>
         </div>
     </div>
 
@@ -107,7 +117,8 @@
         <div class="row">
 
             <section class="col-12 col-4-md col-4-lg" id="lists">
-                <deer-view deer-collection="salon-items" deer-link="#" id="salon-items" deer-template="list"></deer-view>
+                <deer-view deer-collection="salon-items" deer-link="#" id="salon-items" deer-template="items">
+                </deer-view>
                 <h4>Add an Item</h4>
                 <form deer-type="book" deer-context="https://schema.org/">
                     <input type="hidden" deer-key="targetCollection" value="salon-items">
@@ -117,10 +128,11 @@
                     </div>
                     <div class="row">
                         <label class="col-12 tight">Description</label> <input class="col" deer-key="description"
-                        type="text">
+                            type="text">
                         <p class="help-text text-grey col-12">
-                            An account of the content of the resource. Use full sentences. Description presents identifiable information to users to assist in their selection of appropriate resources.
-                        </p> 
+                            An account of the content of the resource. Use full sentences. Description presents
+                            identifiable information to users to assist in their selection of appropriate resources.
+                        </p>
                     </div>
                     <div class="row">
                         <input type="submit" class="col" value="Add an Item">
@@ -129,9 +141,125 @@
             </section>
 
             <section class="col-12 col-8-md col-8-lg">
-                <div deer-listening="salon-items" deer-template="entity" deer-id="placeholder" class="card deer-view bd-light col">
+                <div id="salon-item" deer-template="entity"
+                    deer-id="http://devstore.rerum.io/v1/id/5cc0be16e4b0511ce825257a"
+                    class="card deer-view bd-light col">
                     Select an item to the left to edit.
                 </div>
+                <form id="editSalonItem" deer-context='["https://schema.org", "http://www.w3.org/ns/anno.jsonld"]'
+                    deer-type="Thing" class="col-12">
+                    <input type="hidden" deer-key="targetCollection" value="salon-items">
+                    <div class="row">
+                        <label class="col" for="r0">File name</label>
+                        <input title="File name" class="col "type="text" deer-key="rdf:resource"
+                            value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r1">Transcription</label>
+                        <textarea title="Transcription" class="col" type="text" deer-key="cnt:ContentAsText"></textarea>
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r2">Title</label>
+                        <input title="Title" class="col" type="text" deer-key="name" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r3">Creator</label>
+                        <input title="Creator" class="col" type="text" deer-key="creator" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r4">Contributor</label>
+                        <input title="Contributor" class="col" type="text" deer-key="contributor" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r5">Date</label>
+                        <input title="Date" class="col" type="date" deer-key="dateCreated" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r6">Source</label>
+                        <input title="Source" class="col "type="text" deer-key="madsrdf:Source" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r7">Subject</label>
+                        <textarea title="Subject" class="col "deer-key="about"></textarea>
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r8">Local Subjects</label>
+                        <textarea title="Local Subjects" class="col "deer-key="location"></textarea>
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r9">Description</label>
+                        <textarea title="Description" class="col "deer-key="description"></textarea>
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r10">Extent</label>
+                        <textarea title="Extent" class="col "deer-key="dcterms:extent"></textarea>
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r11">Website</label>
+                        <input title="Website" class="col "type="url" deer-key="collectionPage" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r12">Contributing Institutions</label>
+                        <input title="Contributing Institutions" class="col "type="text" deer-key="contributor" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r13">Publisher</label>
+                        <input title="Publisher" class="col "type="text" deer-key="publisher" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r14">Rights</label>
+                        <input title="Rights" class="col "type="text" deer-key="dcterms:rights" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r15">Language</label>
+                        <input title="Language" class="col "type="text" deer-key="inLanguage" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r16">Digitization Specifications</label>
+                        <input title="Digitization Specifications" class="col "type="text" deer-key="specs" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r17">Format</label>
+                        <input title="Format" class="col "type="text" deer-key="fileFormat" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r18">Media Type</label>
+                        <input title="Media Type" class="col "type="text" deer-key="encodingFormat" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r19">Type</label>
+                        <input title="Type" class="col "type="text" deer-key="disambiguatingDescription" value="" oninput="updateType(this.value)">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r20">Resource Identifier</label>
+                        <input title="Resource Identifier" class="col "type="text" deer-key="@id" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r21">Note</label>
+                        <textarea title="Note" class="col deer-key="cnt:ContentAtText"></textarea>
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r22">Bibliographic Citation</label>
+                        <input title="Bibliographic Citation" class="col" type="text" deer-key="citation" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r23">Digital Collection (Relation)</label>
+                        <input title="Digital Collection (Relation)" class="col "type="text" deer-key="isRelatedTo" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r24">Date Digital</label>
+                        <input title="Date Digital" class="col "type="date" deer-key="dateCreated" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r25">Digital Assistant</label>
+                        <input title="Digital Assistant" class="col "type="text" deer-key="contributor" value="">
+                    </div>
+                    <div class="row">
+                        <label class="col" for="r26">Timestamp</label>
+                        <input title="Timestamp" class="col "type="text" deer-key="selector" value="">
+                    </div>
+                    <input type="submit" value="Save this Record">
+                </form>
             </section>
 
         </div>
@@ -149,16 +277,48 @@
             </small>
         </div>
     </div>
-    
 
-    <script src="js/deer.js" type="module"></script>
-    <!-- <script src="./js/deer.js" type="module"></script> -->
 
-<script>
-    document.onscroll = () => {
-        badge.style.opacity = 1 - window.scrollY / window.innerHeight * 2
-    }
-</script>
+    <script src="js/deer.js" type="module">
+    </script>
+    <!-- <script src="./js/deer.js" type="module">
+</script> -->
+
+    <script>
+        document.onscroll = () => {
+            badge.style.opacity = 1 - window.scrollY / window.innerHeight * 2
+        }
+
+        window.onhashchange = onload = () => {
+            window["salon-item"].setAttribute("deer-id", window.location.hash.substr(1))
+            window["editSalonItem"].setAttribute("deer-id", window.location.hash.substr(1))
+        }
+
+        function updateType(value){
+            let newVal = "Thing"
+            switch(value){
+                case "E-mail" : newVal = "EmailMessage"
+                break
+                case "Portrait" :
+                case "Image" : newVal = "ImageObject"
+                break
+                case "Invitation" : newVal = "Message"
+                break
+                case "Signage" : newVal = "CreativeWork"
+                break
+                case "Manuscript" : 
+                case "Text" : newVal = "Manuscript"
+                break
+                case "Speech" : newVal = "CommunicateAction"
+                break
+                case "Video" : newVal = "Movie"
+                break
+                default : // leave it
+            }
+            window["editSalonItem"].setAttribute("deer-type", newVal)
+        }
+
+    </script>
 
 </body>
 
