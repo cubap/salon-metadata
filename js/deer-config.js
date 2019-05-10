@@ -21,11 +21,11 @@ export default {
     ENTITYNAME: "[deer-key='name']",// selector, value to grab for form entity label
 
     URLS: {
-        BASE_ID: "http://store.rerum.io/v1",
-        CREATE: "http://tiny.rerum.io/app/create",
-        UPDATE: "http://tiny.rerum.io/app/update",
-        QUERY: "http://tiny.rerum.io/app/query",
-        SINCE: "http://store.rerum.io/v1/since"
+        BASE_ID: "http://devstore.rerum.io/v1",
+        CREATE: "http://tinydev.rerum.io/app/create",
+        UPDATE: "http://tinydev.rerum.io/app/update",
+        QUERY: "http://tinydev.rerum.io/app/query",
+        SINCE: "http://devstore.rerum.io/v1/since"
     },
 
     EVENTS: {

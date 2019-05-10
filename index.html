@@ -117,11 +117,11 @@
         <div class="row">
 
             <section class="col-12 col-4-md col-4-lg" id="lists">
-                <deer-view deer-collection="salon-items" deer-link="#" id="salon-items" deer-template="items">
+                <deer-view deer-collection="salon-items-testing" deer-link="#" id="salon-items" deer-template="items">
                 </deer-view>
                 <h4>Add an Item</h4>
                 <form deer-type="book" deer-context="https://schema.org/">
-                    <input type="hidden" deer-key="targetCollection" value="salon-items">
+                    <input type="hidden" deer-key="targetCollection" value="salon-items-testing">
                     <div class="row">
                         <label class="col-12 tight">Title</label> <input class="col" deer-key="name" type="text">
                         <p class="help-text text-grey col-12">Name given to resource</p>
@@ -142,10 +142,11 @@
 
             <section class="col-12 col-8-md col-8-lg">
                 <div id="salon-item" deer-template="entity"
-                    deer-id="http://devstore.rerum.io/v1/id/5cc0be16e4b0511ce825257a"
+                    deer-id="http://devstore.rerum.io/v1/id/5cc9c133e4b0511ce8257318"
                     class="card deer-view bd-light col">
                     Select an item to the left to edit.
                 </div>
+                <h2>Edit <deer-view id="itemLabel" deer-key="name" deer-template="prop">this Item</deer-view></h2>
                 <form id="editSalonItem" deer-context='["https://schema.org", "http://www.w3.org/ns/anno.jsonld"]'
                     deer-type="Thing" class="col-12">
                     <input type="hidden" deer-key="targetCollection" value="salon-items">
@@ -172,7 +173,7 @@
                     </div>
                     <div class="row">
                         <label class="col" for="r5">Date</label>
-                        <input title="Date" class="col" type="date" deer-key="dateCreated" value="">
+                        <input title="Date" class="col" type="text" deer-key="dateCreated" value="">
                     </div>
                     <div class="row">
                         <label class="col" for="r6">Source</label>
@@ -180,19 +181,19 @@
                     </div>
                     <div class="row">
                         <label class="col" for="r7">Subject</label>
-                        <textarea title="Subject" class="col "deer-key="about"></textarea>
+                        <textarea title="Subject" class="col" deer-key="about"></textarea>
                     </div>
                     <div class="row">
                         <label class="col" for="r8">Local Subjects</label>
-                        <textarea title="Local Subjects" class="col "deer-key="location"></textarea>
+                        <textarea title="Local Subjects" class="col" deer-key="location"></textarea>
                     </div>
                     <div class="row">
                         <label class="col" for="r9">Description</label>
-                        <textarea title="Description" class="col "deer-key="description"></textarea>
+                        <textarea title="Description" class="col" deer-key="description"></textarea>
                     </div>
                     <div class="row">
                         <label class="col" for="r10">Extent</label>
-                        <textarea title="Extent" class="col "deer-key="dcterms:extent"></textarea>
+                        <textarea title="Extent" class="col" deer-key="dcterms:extent"></textarea>
                     </div>
                     <div class="row">
                         <label class="col" for="r11">Website</label>
@@ -248,7 +249,7 @@
                     </div>
                     <div class="row">
                         <label class="col" for="r24">Date Digital</label>
-                        <input title="Date Digital" class="col "type="date" deer-key="dateCreated" value="">
+                        <input title="Date Digital" class="col "type="text" deer-key="dateCreated" value="">
                     </div>
                     <div class="row">
                         <label class="col" for="r25">Digital Assistant</label>
@@ -290,8 +291,7 @@
         }
 
         window.onhashchange = onload = () => {
-            window["salon-item"].setAttribute("deer-id", window.location.hash.substr(1))
-            window["editSalonItem"].setAttribute("deer-id", window.location.hash.substr(1))
+            ["salon-item","editSalonItem","itemLabel"].map(name=>window[name].setAttribute("deer-id", window.location.hash.substr(1)))
         }
 
         function updateType(value){

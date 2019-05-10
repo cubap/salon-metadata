@@ -163,10 +163,10 @@
             a[entry][i%types.length]=b
             return a
         },[])
-        let formset = `<button>Save all these!</button>`
+        let formset = `<button role="button" onclick="saveTime()">Save all these!</button>`
 
         formset += records.reduce((x,r,k)=>x+=`<form deer-context='["https://schema.org", "http://www.w3.org/ns/anno.jsonld"]' deer-type="Thing" class="col-12">
-            <input type="hidden" deer-key="targetCollection" value="salon-items">
+            <input type="hidden" deer-key="targetCollection" value="salon-items-testing">
         ${r.reduce((a,b,i)=>a+=`<div class="row"><label class="col" for="k${k}r${i}">${types[i].label}</label><input title="${types[i].label}" class="col" id="k${k}r${i}" type="text" deer-key="${types[i].key}" value="" ></div>`,``)}
             <input type="submit" value="Save this Record">
         </form>`,``)
@@ -181,10 +181,10 @@
         }
     }
 
-    function blammo(){
+    window.saveTime=function(){
         var gooch = 0
         var fs = document.querySelectorAll("input[type='submit']")
-        var clr = setInterval(()=>{fs.item(gooch++).click()},1000)
+        window.clr = setInterval(()=>{fs.item(gooch++).click()},1000)
     }
 </script>
 
